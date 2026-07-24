@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Penilaian Fisik & V-Sit</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- HEADER -->
+        <header>
+            <div class="header-content">
+                <button id="btn-back" class="hidden">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <h1 id="header-title">Sistem Penilaian</h1>
+            </div>
+            <div id="loading-bar" class="hidden"></div>
+        </header>
+
+        <main>
+            <!-- SCREEN 1: PILIH KELAS -->
+            <section id="screen-kelas" class="screen active">
+                <div class="screen-header">
+                    <h2>Pilih Kelas</h2>
+                    <p>Pilih kelas yang sedang Anda nilai</p>
+                </div>
+                <div class="grid-kelas" id="grid-kelas">
+                    <!-- Kelas akan digenerate dari JS -->
+                </div>
+            </section>
+
+            <!-- SCREEN 2: PILIH SISWA -->
+            <section id="screen-siswa" class="screen hidden">
+                <div class="screen-header">
+                    <h2 id="title-kelas-terpilih">Kelas X</h2>
+                    <p>Pilih siswa untuk diukur</p>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="search-siswa" placeholder="Cari nama siswa...">
+                </div>
+                <div class="list-siswa" id="list-siswa">
+                    <!-- Daftar Siswa akan digenerate dari JS -->
+                </div>
+            </section>
+
+            <!-- SCREEN 3: FORM PENILAIAN -->
+            <section id="screen-form" class="screen hidden">
+                <div class="student-card">
+                    <h3 id="form-nama">Budi Santoso</h3>
+                    <p id="form-nisn">NISN: 12345678</p>
+                </div>
+
+                <form id="form-penilaian">
+                    <div class="form-group">
+                        <label>Tanggal Lahir</label>
+                        <input type="date" id="input-tgl" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Apakah Memiliki Disabilitas?</label>
+                        <select id="input-disabilitas" required>
+                            <option value="">-- Pilih --</option>
+                            <option value="Tidak">Tidak</option>
+                            <option value="Ya">Ya</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tinggi Badan (cm)</label>
+                            <input type="number" id="input-tinggi" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Berat Badan (kg)</label>
+                            <input type="number" id="input-berat" step="0.1" required>
+                        </div>
+                    </div>
+
+                    <div class="section-divider">Hasil V-Sit & Reach</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Raihan 1 (cm)</label>
+                            <input type="number" id="input-vsit1" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Raihan 2 (cm)</label>
+                            <input type="number" id="input-vsit2" step="0.1" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Raihan 3 (cm)</label>
+                            <input type="number" id="input-vsit3" step="0.1" required>
+                        </div>
+                        <div class="form-group highlight-input">
+                            <label>Terbaik (cm)</label>
+                            <input type="number" id="input-vsit-best" step="0.1" required readonly>
+                            <small>Otomatis</small>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="btn-submit">Simpan Nilai</button>
+                </form>
+            </section>
+
+            <!-- SCREEN 4: SUCCESS -->
+            <section id="screen-success" class="screen hidden text-center">
+                <div class="success-icon">✓</div>
+                <h2>Berhasil Disimpan!</h2>
+                <p>Data penilaian untuk <strong id="success-nama">Siswa</strong> telah terekam.</p>
+                <button type="button" class="btn-secondary mt-4" id="btn-next-student">Nilai Siswa Berikutnya</button>
+            </section>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden">Pesan disini</div>
+
+    <script src="app.js"></script>
+</body>
+</html>
