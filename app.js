@@ -1,7 +1,7 @@
 // GANTI URL INI DENGAN URL WEB APP DARI GOOGLE APPS SCRIPT ANDA
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWg67MwADUTOlPvAdjJGJ3VMNnAavfyTtjeHPVLAdWyYa4phOCjl7z2wcZawrE9NC-eQ/exec"; 
 
-let dataSiswa = []; // Akan berisi {kelas, nisn, nama, status}
+let dataSiswa = []; // Akan berisi {kelas, nis, nama, status}
 let kelasUnik = [];
 let state = {
     currentScreen: 'kelas', // kelas, siswa, form, success
@@ -30,7 +30,7 @@ const el = {
     
     form: {
         nama: document.getElementById('form-nama'),
-        nisn: document.getElementById('form-nisn'),
+        nis: document.getElementById('form-nis'),
         element: document.getElementById('form-penilaian'),
         btnSubmit: document.getElementById('btn-submit'),
         successNama: document.getElementById('success-nama'),
@@ -97,7 +97,7 @@ function navigate(toScreen, payload = null) {
         el.btnBack.classList.remove('hidden');
         el.headerTitle.textContent = "Input Penilaian";
         el.form.nama.textContent = state.selectedSiswa.nama;
-        el.form.nisn.textContent = `NISN: ${state.selectedSiswa.nisn}`;
+        el.form.nis.textContent = `nis: ${state.selectedSiswa.nis}`;
         el.form.element.reset();
     } else if (toScreen === 'success') {
         el.btnBack.classList.add('hidden');
@@ -105,7 +105,7 @@ function navigate(toScreen, payload = null) {
         el.form.successNama.textContent = state.selectedSiswa.nama;
         
         // Tandai siswa selesai
-        const s = dataSiswa.find(x => x.nisn === state.selectedSiswa.nisn);
+        const s = dataSiswa.find(x => x.nis === state.selectedSiswa.nis);
         if(s) s.status = 'done';
     }
 }
@@ -147,14 +147,14 @@ function renderKelas() {
 function renderSiswa(search = "") {
     let filtered = dataSiswa.filter(s => s.kelas === state.selectedKelas);
     if(search) {
-        filtered = filtered.filter(s => s.nama.toLowerCase().includes(search.toLowerCase()) || s.nisn.includes(search));
+        filtered = filtered.filter(s => s.nama.toLowerCase().includes(search.toLowerCase()) || s.nis.includes(search));
     }
     
     el.listSiswa.innerHTML = filtered.map(s => `
-        <div class="siswa-item" onclick="selectSiswa('${s.nisn}')">
+        <div class="siswa-item" onclick="selectSiswa('${s.nis}')">
             <div class="siswa-info">
                 <h4>${s.nama}</h4>
-                <p>NISN: ${s.nisn}</p>
+                <p>nis: ${s.nis}</p>
             </div>
             ${s.status === 'done' ? '<div class="siswa-status done">Selesai</div>' : '<div class="siswa-status">Belum</div>'}
         </div>
@@ -167,8 +167,8 @@ window.selectKelas = (kelas) => {
     navigate('siswa');
 };
 
-window.selectSiswa = (nisn) => {
-    state.selectedSiswa = dataSiswa.find(s => s.nisn === nisn);
+window.selectSiswa = (nis) => {
+    state.selectedSiswa = dataSiswa.find(s => s.nis === nis);
     navigate('form');
 };
 
@@ -195,7 +195,7 @@ el.form.element.addEventListener('submit', async (e) => {
         action: "insert",
         data: {
             kelas: state.selectedKelas,
-            nisn: state.selectedSiswa.nisn,
+            nis: state.selectedSiswa.nis,
             nama: state.selectedSiswa.nama,
             tgl_lahir: document.getElementById('input-tgl').value,
             disabilitas: document.getElementById('input-disabilitas').value,
@@ -250,7 +250,7 @@ function generateDummyData() {
         for(let j=0; j<6; j++) {
             data.push({
                 kelas: `Kelas ${i}`,
-                nisn: `100${i}00${j}`,
+                nis: `100${i}00${j}`,
                 nama: `${namaSiswa[j]} - ${i}`,
                 status: j === 0 ? 'done' : 'pending' // contoh ada yg sudah selesai
             });
