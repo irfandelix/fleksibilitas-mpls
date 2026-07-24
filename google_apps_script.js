@@ -14,14 +14,14 @@ function doGet(e) {
     
     // Berdasarkan format Spreadsheet Anda:
     // Baris 1-7 adalah kop surat (Nama Sekolah, dll)
-    // Baris 8 adalah Header (nis, No Absen, Nama Murid, dll)
+    // Baris 8 adalah Header (NIS, No Absen, NISN, Nama Murid, dll)
     // Data siswa dimulai dari index 8 (Baris 9 di spreadsheet)
     for(var i = 8; i < data.length; i++) {
       var nis = data[i][0]; // Kolom A
-      var nama = data[i][2]; // Kolom C (Index 2)
-      var tinggi = data[i][5]; // Kolom F (Index 5)
+      var nama = data[i][3]; // Kolom D (Index 3)
+      var tinggi = data[i][6]; // Kolom G (Index 6)
       
-      if(nis && nama) { // Jika nis dan Nama tidak kosong
+      if(nis && nama) { // Jika NIS dan Nama tidak kosong
         result.push({
           kelas: namaKelas,
           nis: nis.toString(),
@@ -57,7 +57,7 @@ function doPost(e) {
       var data = sheet.getDataRange().getValues();
       var rowToUpdate = -1;
       
-      // Cari baris siswa berdasarkan nis (Kolom A / Index 0) mulai dari baris data (index 8)
+      // Cari baris siswa berdasarkan NIS (Kolom A / Index 0) mulai dari baris data (index 8)
       for(var i = 8; i < data.length; i++) {
         if(data[i][0].toString() === d.nis.toString()) {
           rowToUpdate = i + 1; // +1 karena index array mulai 0, row sheet mulai 1
@@ -66,28 +66,30 @@ function doPost(e) {
       }
       
       if(rowToUpdate === -1) {
-        return ContentService.createTextOutput(JSON.stringify({status: 'error', message: 'Siswa dengan nis ' + d.nis + ' tidak ditemukan di sheet ' + d.kelas}))
+        return ContentService.createTextOutput(JSON.stringify({status: 'error', message: 'Siswa dengan NIS ' + d.nis + ' tidak ditemukan di sheet ' + d.kelas}))
                              .setMimeType(ContentService.MimeType.JSON);
       }
       
       // Update data di baris yang ditemukan berdasarkan kolom yang tepat:
-      // Kolom D (4) = Tgl Lahir
-      // Kolom E (5) = Disabilitas
-      // Kolom F (6) = Tinggi Badan
-      // Kolom G (7) = Berat Badan
-      // Kolom H (8) = VSit 1
-      // Kolom I (9) = VSit 2
-      // Kolom J (10) = VSit 3
-      // Kolom K (11) = VSit Terbaik
+      // Kolom C (3) = NISN (Inputan baru)
+      // Kolom E (5) = Tgl Lahir
+      // Kolom F (6) = Disabilitas
+      // Kolom G (7) = Tinggi Badan
+      // Kolom H (8) = Berat Badan
+      // Kolom I (9) = VSit 1
+      // Kolom J (10) = VSit 2
+      // Kolom K (11) = VSit 3
+      // Kolom L (12) = VSit Terbaik
       
-      sheet.getRange(rowToUpdate, 4).setValue(d.tgl_lahir);
-      sheet.getRange(rowToUpdate, 5).setValue(d.disabilitas);
-      sheet.getRange(rowToUpdate, 6).setValue(d.tinggi);
-      sheet.getRange(rowToUpdate, 7).setValue(d.berat);
-      sheet.getRange(rowToUpdate, 8).setValue(d.vsit1);
-      sheet.getRange(rowToUpdate, 9).setValue(d.vsit2);
-      sheet.getRange(rowToUpdate, 10).setValue(d.vsit3);
-      sheet.getRange(rowToUpdate, 11).setValue(d.vsit_best);
+      sheet.getRange(rowToUpdate, 3).setValue(d.nisn_input);
+      sheet.getRange(rowToUpdate, 5).setValue(d.tgl_lahir);
+      sheet.getRange(rowToUpdate, 6).setValue(d.disabilitas);
+      sheet.getRange(rowToUpdate, 7).setValue(d.tinggi);
+      sheet.getRange(rowToUpdate, 8).setValue(d.berat);
+      sheet.getRange(rowToUpdate, 9).setValue(d.vsit1);
+      sheet.getRange(rowToUpdate, 10).setValue(d.vsit2);
+      sheet.getRange(rowToUpdate, 11).setValue(d.vsit3);
+      sheet.getRange(rowToUpdate, 12).setValue(d.vsit_best);
       
       return ContentService.createTextOutput(JSON.stringify({status: 'success'}))
                            .setMimeType(ContentService.MimeType.JSON);

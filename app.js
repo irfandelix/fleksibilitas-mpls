@@ -197,6 +197,7 @@ el.form.element.addEventListener('submit', async (e) => {
             kelas: state.selectedKelas,
             nis: state.selectedSiswa.nis,
             nama: state.selectedSiswa.nama,
+            nisn_input: document.getElementById('input-nisn').value,
             tgl_lahir: document.getElementById('input-tgl').value,
             disabilitas: document.getElementById('input-disabilitas').value,
             tinggi: document.getElementById('input-tinggi').value,
