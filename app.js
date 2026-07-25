@@ -96,9 +96,34 @@ function navigate(toScreen, payload = null) {
     } else if (toScreen === 'form') {
         el.btnBack.classList.remove('hidden');
         el.headerTitle.textContent = "Input Penilaian";
-        el.form.nama.textContent = state.selectedSiswa.nama;
-        el.form.nis.textContent = `nis: ${state.selectedSiswa.nis}`;
+        
+        const s = state.selectedSiswa;
+        el.form.nama.textContent = s.nama;
+        el.form.nis.textContent = `NIS: ${s.nis}`;
         el.form.element.reset();
+        
+        // --- PRE-FILL DATA LAMA ---
+        if (s.tgl_lahir) document.getElementById('input-tgl').value = s.tgl_lahir;
+        if (s.disabilitas) document.getElementById('input-disabilitas').value = s.disabilitas;
+        if (s.tinggi) document.getElementById('input-tinggi').value = s.tinggi;
+        if (s.berat) document.getElementById('input-berat').value = s.berat;
+        if (s.vsit1) el.inputs.vsit1.value = s.vsit1;
+        if (s.vsit2) el.inputs.vsit2.value = s.vsit2;
+        if (s.vsit3) el.inputs.vsit3.value = s.vsit3;
+        if (s.vsit_best) el.inputs.vsitBest.value = s.vsit_best;
+
+        // --- KUNCI NISN JIKA SUDAH DIISI (Bukan 0) ---
+        const inputNisn = document.getElementById('input-nisn');
+        // Bersihkan tanda petik satu (') dari Google Sheets jika ada
+        const existingNisn = s.nisn ? s.nisn.replace(/^'/, '') : "";
+        
+        if (existingNisn && existingNisn !== "0" && existingNisn !== "0000000000") {
+            inputNisn.value = existingNisn;
+            inputNisn.readOnly = true;
+        } else {
+            inputNisn.value = "";
+            inputNisn.readOnly = false;
+        }
     } else if (toScreen === 'success') {
         el.btnBack.classList.add('hidden');
         el.headerTitle.textContent = "Selesai";

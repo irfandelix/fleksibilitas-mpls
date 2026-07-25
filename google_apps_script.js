@@ -22,10 +22,32 @@ function doGet(e) {
       var tinggi = data[i][6]; // Kolom G (Index 6)
       
       if(nis && nama) { // Jika NIS dan Nama tidak kosong
+        
+        // Format Tanggal Lahir ke YYYY-MM-DD untuk input HTML
+        var tgl = data[i][4]; // Kolom E (Index 4)
+        var tglStr = "";
+        if (tgl instanceof Date) {
+          var m = tgl.getMonth() + 1;
+          var d = tgl.getDate();
+          tglStr = tgl.getFullYear() + '-' + (m < 10 ? '0'+m : m) + '-' + (d < 10 ? '0'+d : d);
+        } else if (tgl) {
+          tglStr = tgl.toString();
+        }
+
         result.push({
           kelas: namaKelas,
           nis: nis.toString(),
+          nisn: data[i][2] ? data[i][2].toString() : "", // Kolom C (Index 2)
           nama: nama.toString(),
+          tgl_lahir: tglStr,
+          disabilitas: data[i][5] || "", // Kolom F
+          tinggi: data[i][6] || "", // Kolom G
+          berat: data[i][7] || "", // Kolom H
+          vsit1: data[i][8] || "", // Kolom I
+          vsit2: data[i][9] || "", // Kolom J
+          vsit3: data[i][10] || "", // Kolom K
+          vsit_best: data[i][11] || "", // Kolom L
+          
           // Jika kolom Tinggi Badan sudah terisi, anggap sudah dinilai
           status: tinggi ? 'done' : 'pending' 
         });
