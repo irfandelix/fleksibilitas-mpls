@@ -53,6 +53,15 @@ header {
     height: 60px;
 }
 
+.badge-pending {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+.badge-warning {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
 #btn-back {
     background: none;
     border: none;
@@ -157,6 +166,7 @@ main { padding: 24px 20px; flex: 1; overflow-y: auto; overflow-x: hidden; }
     border-radius: 20px; background: #F1F5F9; color: var(--text-muted);
 }
 .siswa-status.done { background: #D1FAE5; color: #065F46; }
+.siswa-status.warning { background: #FEF3C7; color: #92400E; }
 
 /* Form Penilaian */
 .student-card {

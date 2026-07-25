@@ -192,15 +192,23 @@ function renderSiswa(search = "") {
         filtered = filtered.filter(s => s.nama.toLowerCase().includes(search.toLowerCase()) || s.nis.includes(search));
     }
     
-    el.listSiswa.innerHTML = filtered.map(s => `
+    el.listSiswa.innerHTML = filtered.map(s => {
+        const existingNisn = s.nisn ? s.nisn.replace(/^'/, '') : "";
+        const isNisnValid = (existingNisn && existingNisn !== "0" && existingNisn !== "0000000000");
+        
+        return `
         <div class="siswa-item" onclick="selectSiswa('${s.nis}')">
             <div class="siswa-info">
                 <h4>${s.nama}</h4>
-                <p>nis: ${s.nis}</p>
+                <p>NIS: ${s.nis}</p>
             </div>
-            ${s.status === 'done' ? '<div class="siswa-status done">Selesai</div>' : '<div class="siswa-status">Belum</div>'}
+            <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
+                ${s.status === 'done' ? '<div class="siswa-status done">Selesai</div>' : '<div class="siswa-status">Belum</div>'}
+                ${isNisnValid ? '<div class="siswa-status done">NISN Oke</div>' : '<div class="siswa-status warning">NISN Kosong</div>'}
+            </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // Actions
