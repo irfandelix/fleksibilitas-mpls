@@ -81,7 +81,8 @@ function doPost(e) {
       // Kolom K (11) = VSit 3
       // Kolom L (12) = VSit Terbaik
       
-      sheet.getRange(rowToUpdate, 3).setValue(d.nisn_input);
+      // Tambahkan tanda petik satu (') di depan NISN agar angka 0 di depan tidak hilang
+      sheet.getRange(rowToUpdate, 3).setValue("'" + d.nisn_input);
       sheet.getRange(rowToUpdate, 5).setValue(d.tgl_lahir);
       sheet.getRange(rowToUpdate, 6).setValue(d.disabilitas);
       sheet.getRange(rowToUpdate, 7).setValue(d.tinggi);
