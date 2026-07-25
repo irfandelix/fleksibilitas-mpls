@@ -118,16 +118,18 @@ function navigate(toScreen, payload = null) {
         const fieldsToLock = [
             document.getElementById('input-tgl'),
             document.getElementById('input-tinggi'),
-            document.getElementById('input-berat'),
-            el.inputs.vsit1,
-            el.inputs.vsit2,
-            el.inputs.vsit3
+            document.getElementById('input-berat')
         ];
         
         fieldsToLock.forEach(field => {
             field.readOnly = isDone;
         });
         document.getElementById('input-disabilitas').disabled = isDone;
+
+        // --- KUNCI MATI SELURUH V-SIT (PERMANEN SESUAI PERMINTAAN) ---
+        [el.inputs.vsit1, el.inputs.vsit2, el.inputs.vsit3].forEach(field => {
+            field.readOnly = true;
+        });
 
         // --- KUNCI NISN JIKA SUDAH DIISI (Bukan 0) ---
         const inputNisn = document.getElementById('input-nisn');
