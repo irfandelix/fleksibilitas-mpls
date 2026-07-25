@@ -112,6 +112,22 @@ function navigate(toScreen, payload = null) {
         if (s.vsit3) el.inputs.vsit3.value = s.vsit3;
         if (s.vsit_best) el.inputs.vsitBest.value = s.vsit_best;
 
+        // --- KUNCI DATA FISIK JIKA SUDAH DINILAI (status == 'done') ---
+        const isDone = s.status === 'done';
+        const fieldsToLock = [
+            document.getElementById('input-tgl'),
+            document.getElementById('input-tinggi'),
+            document.getElementById('input-berat'),
+            el.inputs.vsit1,
+            el.inputs.vsit2,
+            el.inputs.vsit3
+        ];
+        
+        fieldsToLock.forEach(field => {
+            field.readOnly = isDone;
+        });
+        document.getElementById('input-disabilitas').disabled = isDone;
+
         // --- KUNCI NISN JIKA SUDAH DIISI (Bukan 0) ---
         const inputNisn = document.getElementById('input-nisn');
         // Bersihkan tanda petik satu (') dari Google Sheets jika ada
@@ -121,7 +137,8 @@ function navigate(toScreen, payload = null) {
             inputNisn.value = existingNisn;
             inputNisn.readOnly = true;
         } else {
-            inputNisn.value = "";
+            // Jika dulunya diisi 0, kosongkan agar teks placeholder muncul
+            inputNisn.value = (existingNisn === "0" || existingNisn === "0000000000") ? "" : existingNisn;
             inputNisn.readOnly = false;
         }
     } else if (toScreen === 'success') {
