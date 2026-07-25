@@ -111,6 +111,7 @@ function navigate(toScreen, payload = null) {
         if (s.vsit2) el.inputs.vsit2.value = s.vsit2;
         if (s.vsit3) el.inputs.vsit3.value = s.vsit3;
         if (s.vsit_best) el.inputs.vsitBest.value = s.vsit_best;
+        if (s.ekskul) document.getElementById('input-ekskul').value = s.ekskul;
 
         // --- KUNCI DATA FISIK JIKA SUDAH DINILAI (status == 'done') ---
         const isDone = s.status === 'done';
@@ -195,6 +196,7 @@ function renderSiswa(search = "") {
     el.listSiswa.innerHTML = filtered.map(s => {
         const existingNisn = s.nisn ? s.nisn.replace(/^'/, '') : "";
         const isNisnValid = (existingNisn && existingNisn !== "0" && existingNisn !== "0000000000");
+        const isEkskulValid = (s.ekskul && s.ekskul.trim() !== "");
         
         return `
         <div class="siswa-item" onclick="selectSiswa('${s.nis}')">
@@ -202,9 +204,10 @@ function renderSiswa(search = "") {
                 <h4>${s.nama}</h4>
                 <p>NIS: ${s.nis}</p>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
+            <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end;">
                 ${s.status === 'done' ? '<div class="siswa-status done">Selesai</div>' : '<div class="siswa-status">Belum</div>'}
                 ${isNisnValid ? '<div class="siswa-status done">NISN Oke</div>' : '<div class="siswa-status warning">NISN Kosong</div>'}
+                ${isEkskulValid ? '<div class="siswa-status done">Ekskul Oke</div>' : '<div class="siswa-status warning">Ekskul Belum</div>'}
             </div>
         </div>
         `;
@@ -255,7 +258,8 @@ el.form.element.addEventListener('submit', async (e) => {
             vsit1: el.inputs.vsit1.value,
             vsit2: el.inputs.vsit2.value,
             vsit3: el.inputs.vsit3.value,
-            vsit_best: el.inputs.vsitBest.value
+            vsit_best: el.inputs.vsitBest.value,
+            ekskul: document.getElementById('input-ekskul').value
         }
     };
 

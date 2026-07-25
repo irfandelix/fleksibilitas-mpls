@@ -47,6 +47,7 @@ function doGet(e) {
           vsit2: data[i][9] || "", // Kolom J
           vsit3: data[i][10] || "", // Kolom K
           vsit_best: data[i][11] || "", // Kolom L
+          ekskul: data[i][12] || "", // Kolom M
           
           // Jika kolom Tinggi Badan sudah terisi, anggap sudah dinilai
           status: tinggi ? 'done' : 'pending' 
@@ -102,6 +103,7 @@ function doPost(e) {
       // Kolom J (10) = VSit 2
       // Kolom K (11) = VSit 3
       // Kolom L (12) = VSit Terbaik
+      // Kolom M (13) = Ekstrakurikuler
       
       // Tambahkan tanda petik satu (') di depan NISN agar angka 0 di depan tidak hilang
       sheet.getRange(rowToUpdate, 3).setValue("'" + d.nisn_input);
@@ -113,6 +115,7 @@ function doPost(e) {
       sheet.getRange(rowToUpdate, 10).setValue(d.vsit2);
       sheet.getRange(rowToUpdate, 11).setValue(d.vsit3);
       sheet.getRange(rowToUpdate, 12).setValue(d.vsit_best);
+      sheet.getRange(rowToUpdate, 13).setValue(d.ekskul);
       
       return ContentService.createTextOutput(JSON.stringify({status: 'success'}))
                            .setMimeType(ContentService.MimeType.JSON);
