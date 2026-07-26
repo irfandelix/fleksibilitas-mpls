@@ -1,4 +1,4 @@
-﻿function doPost(e) {
+function doPost(e) {
   try {
     var d = JSON.parse(e.postData.contents);
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Kumpulan Data");
@@ -58,6 +58,7 @@ function doGet(e) {
         
         dataSiswa.push({
           nis: row[0] ? row[0].toString() : "", // Kolom A
+          nisn: row[1] ? row[1].toString() : "", // Kolom B
           nama: row[2] ? row[2].toString() : "", // Kolom C = Nama Murid
           kelas: currentClass,
           ekskul: ekskulValue.toString(),
