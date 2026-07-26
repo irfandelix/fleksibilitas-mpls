@@ -162,7 +162,7 @@ el.form.element.addEventListener('submit', async (e) => {
         setTimeout(() => {
             hideLoading();
             el.form.btnSubmit.disabled = false;
-            el.form.btnSubmit.textContent = "Simpan Nilai";
+            el.form.btnSubmit.textContent = "Simpan";
             navigate('success');
         }, 1000);
         return;
@@ -200,7 +200,7 @@ el.form.element.addEventListener('submit', async (e) => {
     } finally {
         hideLoading();
         el.form.btnSubmit.disabled = false;
-        el.form.btnSubmit.textContent = "Simpan Nilai";
+        el.form.btnSubmit.textContent = "Simpan";
     }
 });
 
