@@ -1,4 +1,4 @@
-﻿const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWg67MwADUTOlPvAdjJGJ3VMNnAavfyTtjeHPVLAdWyYa4phOCjl7z2wcZawrE9NC-eQ/exec"; 
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWg67MwADUTOlPvAdjJGJ3VMNnAavfyTtjeHPVLAdWyYa4phOCjl7z2wcZawrE9NC-eQ/exec"; 
 
 let dataSiswa = [];
 let kelasUnik = [];
@@ -83,7 +83,12 @@ function navigate(toScreen) {
         
         document.getElementById('detail-nisn').textContent = s.nisn || "-";
         
-        if (s.ekskul) document.getElementById('input-ekskul').value = s.ekskul;
+        // Clear all radios first
+        document.querySelectorAll('input[name="ekskul"]').forEach(r => r.checked = false);
+        if (s.ekskul) {
+            const radio = document.querySelector(`input[name="ekskul"][value="${s.ekskul}"]`);
+            if (radio) radio.checked = true;
+        }
 
     } else if (toScreen === 'success') {
         el.btnBack.classList.add('hidden');
@@ -92,7 +97,8 @@ function navigate(toScreen) {
         const s = dataSiswa.find(x => x.nis === state.selectedSiswa.nis);
         if(s) {
             s.status = 'done';
-            s.ekskul = document.getElementById('input-ekskul').value;
+            const selectedRadio = document.querySelector('input[name="ekskul"]:checked');
+            s.ekskul = selectedRadio ? selectedRadio.value : "";
         }
     }
 }
@@ -162,11 +168,14 @@ el.form.element.addEventListener('submit', async (e) => {
         return;
     }
 
+    const selectedRadio = document.querySelector('input[name="ekskul"]:checked');
+    const ekskulValue = selectedRadio ? selectedRadio.value : "";
+
     const payload = {
         action: "insert",
         data: {
             nis: state.selectedSiswa.nis,
-            ekskul: document.getElementById('input-ekskul').value
+            ekskul: ekskulValue
         }
     };
 

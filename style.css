@@ -242,3 +242,30 @@ input:read-only, select:disabled { background: #F1F5F9; color: var(--text-muted)
     box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
     transition: opacity 0.3s;
 }
+
+/* Ekstrakurikuler Radio Buttons */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+.radio-btn {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+}
+.radio-btn:hover {
+    border-color: var(--primary-color);
+    background: #f0f7ff;
+}
+.radio-btn input {
+    margin-right: 12px;
+    transform: scale(1.2);
+}
