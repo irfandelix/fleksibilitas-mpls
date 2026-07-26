@@ -1,15 +1,13 @@
-// GANTI URL INI DENGAN URL WEB APP DARI GOOGLE APPS SCRIPT ANDA
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWg67MwADUTOlPvAdjJGJ3VMNnAavfyTtjeHPVLAdWyYa4phOCjl7z2wcZawrE9NC-eQ/exec"; 
+﻿const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWg67MwADUTOlPvAdjJGJ3VMNnAavfyTtjeHPVLAdWyYa4phOCjl7z2wcZawrE9NC-eQ/exec"; 
 
-let dataSiswa = []; // Akan berisi {kelas, nis, nama, status}
+let dataSiswa = [];
 let kelasUnik = [];
 let state = {
-    currentScreen: 'kelas', // kelas, siswa, form, success
+    currentScreen: 'kelas',
     selectedKelas: null,
     selectedSiswa: null
 };
 
-// Elements
 const el = {
     btnBack: document.getElementById('btn-back'),
     headerTitle: document.getElementById('header-title'),
@@ -35,17 +33,9 @@ const el = {
         btnSubmit: document.getElementById('btn-submit'),
         successNama: document.getElementById('success-nama'),
         btnNext: document.getElementById('btn-next-student')
-    },
-    
-    inputs: {
-        vsit1: document.getElementById('input-vsit1'),
-        vsit2: document.getElementById('input-vsit2'),
-        vsit3: document.getElementById('input-vsit3'),
-        vsitBest: document.getElementById('input-vsit-best')
     }
 };
 
-// Initialize App
 async function init() {
     showLoading();
     try {
@@ -54,11 +44,9 @@ async function init() {
             const json = await res.json();
             dataSiswa = json.data; 
         } else {
-            // DUMMY DATA JIKA BELUM ADA URL
             dataSiswa = generateDummyData();
         }
         
-        // Extract Unique Classes
         kelasUnik = [...new Set(dataSiswa.map(s => s.kelas))].sort();
         renderKelas();
         hideLoading();
@@ -68,94 +56,47 @@ async function init() {
     }
 }
 
-// Navigation Logic
-function navigate(toScreen, payload = null) {
-    // Hide all
+function navigate(toScreen) {
     Object.values(el.screens).forEach(s => s.classList.remove('active'));
     setTimeout(() => {
         Object.values(el.screens).forEach(s => s.classList.add('hidden'));
-        
-        // Show target
         el.screens[toScreen].classList.remove('hidden');
-        // Trigger reflow for animation
         void el.screens[toScreen].offsetWidth;
         el.screens[toScreen].classList.add('active');
-    }, 50); // slight delay to allow display block before transition
+    }, 50);
 
     state.currentScreen = toScreen;
 
-    // Update Header
     if(toScreen === 'kelas') {
         el.btnBack.classList.add('hidden');
-        el.headerTitle.textContent = "Sistem Penilaian";
     } else if (toScreen === 'siswa') {
         el.btnBack.classList.remove('hidden');
-        el.headerTitle.textContent = `Kelas ${state.selectedKelas}`;
-        el.titleKelas.textContent = `Kelas ${state.selectedKelas}`;
+        el.titleKelas.textContent = "Kelas " + state.selectedKelas;
         renderSiswa();
     } else if (toScreen === 'form') {
         el.btnBack.classList.remove('hidden');
-        el.headerTitle.textContent = "Input Penilaian";
         
         const s = state.selectedSiswa;
         el.form.nama.textContent = s.nama;
-        el.form.nis.textContent = `NIS: ${s.nis}`;
+        el.form.nis.textContent = "NIS: " + s.nis;
         el.form.element.reset();
         
-        // --- PRE-FILL DATA LAMA ---
-        if (s.tgl_lahir) document.getElementById('input-tgl').value = s.tgl_lahir;
-        if (s.disabilitas) document.getElementById('input-disabilitas').value = s.disabilitas;
-        if (s.tinggi) document.getElementById('input-tinggi').value = s.tinggi;
-        if (s.berat) document.getElementById('input-berat').value = s.berat;
-        if (s.vsit1) el.inputs.vsit1.value = s.vsit1;
-        if (s.vsit2) el.inputs.vsit2.value = s.vsit2;
-        if (s.vsit3) el.inputs.vsit3.value = s.vsit3;
-        if (s.vsit_best) el.inputs.vsitBest.value = s.vsit_best;
+        document.getElementById('detail-nisn').textContent = s.nisn || "-";
+        
         if (s.ekskul) document.getElementById('input-ekskul').value = s.ekskul;
 
-        // --- KUNCI DATA FISIK JIKA SUDAH DINILAI (status == 'done') ---
-        const isDone = s.status === 'done';
-        const fieldsToLock = [
-            document.getElementById('input-tgl'),
-            document.getElementById('input-tinggi'),
-            document.getElementById('input-berat')
-        ];
-        
-        fieldsToLock.forEach(field => {
-            field.readOnly = isDone;
-        });
-        document.getElementById('input-disabilitas').disabled = isDone;
-
-        // --- KUNCI MATI SELURUH V-SIT (PERMANEN SESUAI PERMINTAAN) ---
-        [el.inputs.vsit1, el.inputs.vsit2, el.inputs.vsit3].forEach(field => {
-            field.readOnly = true;
-        });
-
-        // --- KUNCI NISN JIKA SUDAH DIISI (Bukan 0) ---
-        const inputNisn = document.getElementById('input-nisn');
-        // Bersihkan tanda petik satu (') dari Google Sheets jika ada
-        const existingNisn = s.nisn ? s.nisn.replace(/^'/, '') : "";
-        
-        if (existingNisn && existingNisn !== "0" && existingNisn !== "0000000000") {
-            inputNisn.value = existingNisn;
-            inputNisn.readOnly = true;
-        } else {
-            // Jika dulunya diisi 0, kosongkan agar teks placeholder muncul
-            inputNisn.value = (existingNisn === "0" || existingNisn === "0000000000") ? "" : existingNisn;
-            inputNisn.readOnly = false;
-        }
     } else if (toScreen === 'success') {
         el.btnBack.classList.add('hidden');
-        el.headerTitle.textContent = "Selesai";
         el.form.successNama.textContent = state.selectedSiswa.nama;
         
-        // Tandai siswa selesai
         const s = dataSiswa.find(x => x.nis === state.selectedSiswa.nis);
-        if(s) s.status = 'done';
+        if(s) {
+            s.status = 'done';
+            s.ekskul = document.getElementById('input-ekskul').value;
+        }
     }
 }
 
-// Event Listeners
 el.btnBack.addEventListener('click', () => {
     if(state.currentScreen === 'siswa') navigate('kelas');
     if(state.currentScreen === 'form') navigate('siswa');
@@ -165,28 +106,15 @@ el.searchSiswa.addEventListener('input', (e) => {
     renderSiswa(e.target.value);
 });
 
-// Hitung Otomatis Vsit Terbaik
-[el.inputs.vsit1, el.inputs.vsit2, el.inputs.vsit3].forEach(input => {
-    input.addEventListener('input', updateBestVsit);
-});
-
-function updateBestVsit() {
-    const v1 = parseFloat(el.inputs.vsit1.value) || 0;
-    const v2 = parseFloat(el.inputs.vsit2.value) || 0;
-    const v3 = parseFloat(el.inputs.vsit3.value) || 0;
-    el.inputs.vsitBest.value = Math.max(v1, v2, v3);
-}
-
 el.form.btnNext.addEventListener('click', () => navigate('siswa'));
 
-// Renderers
 function renderKelas() {
-    el.gridKelas.innerHTML = kelasUnik.map(k => `
-        <div class="kelas-card" onclick="selectKelas('${k}')">
-            <h3>${k}</h3>
-            <p>${dataSiswa.filter(s => s.kelas === k).length} Siswa</p>
+    el.gridKelas.innerHTML = kelasUnik.map(k => "
+        <div class="kelas-card" onclick="selectKelas('" + k + "')">
+            <h3>" + k + "</h3>
+            <p>" + dataSiswa.filter(s => s.kelas === k).length + " Siswa</p>
         </div>
-    `).join('');
+    ").join('');
 }
 
 function renderSiswa(search = "") {
@@ -195,28 +123,19 @@ function renderSiswa(search = "") {
         filtered = filtered.filter(s => s.nama.toLowerCase().includes(search.toLowerCase()) || s.nis.includes(search));
     }
     
-    el.listSiswa.innerHTML = filtered.map(s => {
-        const existingNisn = s.nisn ? s.nisn.replace(/^'/, '') : "";
-        const isNisnValid = (existingNisn && existingNisn !== "0" && existingNisn !== "0000000000");
-        const isEkskulValid = (s.ekskul && s.ekskul.trim() !== "");
-        
-        return `
-        <div class="siswa-item" onclick="selectSiswa('${s.nis}')">
+    el.listSiswa.innerHTML = filtered.map(s => "
+        <div class="siswa-item" onclick="selectSiswa('" + s.nis + "')">
             <div class="siswa-info">
-                <h4>${s.nama}</h4>
-                <p>NIS: ${s.nis}</p>
+                <h4>" + s.nama + "</h4>
+                <p>NIS: " + s.nis + "</p>
             </div>
             <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end;">
-                ${s.status === 'done' ? '<div class="siswa-status done">Selesai</div>' : '<div class="siswa-status">Belum</div>'}
-                ${isNisnValid ? '<div class="siswa-status done">NISN Oke</div>' : '<div class="siswa-status warning">NISN Kosong</div>'}
-                ${isEkskulValid ? '<div class="siswa-status done">Ekskul Oke</div>' : '<div class="siswa-status warning">Ekskul Belum</div>'}
+                " + (s.status === 'done' ? "<div class='siswa-status done'>Sudah Memilih</div>" : "<div class='siswa-status warning'>Belum Memilih</div>") + "
             </div>
         </div>
-        `;
-    }).join('');
+        ").join('');
 }
 
-// Actions
 window.selectKelas = (kelas) => {
     state.selectedKelas = kelas;
     navigate('siswa');
@@ -227,11 +146,9 @@ window.selectSiswa = (nis) => {
     navigate('form');
 };
 
-// Form Submission
 el.form.element.addEventListener('submit', async (e) => {
     e.preventDefault();
     if(APPS_SCRIPT_URL === "URL_APPS_SCRIPT_ANDA") {
-        // Mode Simulasi jika URL belum diisi
         showLoading();
         el.form.btnSubmit.disabled = true;
         el.form.btnSubmit.textContent = "Menyimpan...";
@@ -245,22 +162,10 @@ el.form.element.addEventListener('submit', async (e) => {
         return;
     }
 
-    // Submit ke Apps Script
     const payload = {
         action: "insert",
         data: {
-            kelas: state.selectedKelas,
             nis: state.selectedSiswa.nis,
-            nama: state.selectedSiswa.nama,
-            nisn_input: document.getElementById('input-nisn').value,
-            tgl_lahir: document.getElementById('input-tgl').value,
-            disabilitas: document.getElementById('input-disabilitas').value,
-            tinggi: document.getElementById('input-tinggi').value,
-            berat: document.getElementById('input-berat').value,
-            vsit1: el.inputs.vsit1.value,
-            vsit2: el.inputs.vsit2.value,
-            vsit3: el.inputs.vsit3.value,
-            vsit_best: el.inputs.vsitBest.value,
             ekskul: document.getElementById('input-ekskul').value
         }
     };
@@ -290,7 +195,6 @@ el.form.element.addEventListener('submit', async (e) => {
     }
 });
 
-// UI Utils
 function showLoading() { el.loadingBar.style.width = '100%'; el.loadingBar.classList.add('loading-active'); }
 function hideLoading() { el.loadingBar.classList.remove('loading-active'); setTimeout(()=> el.loadingBar.style.width = '0', 300); }
 function showToast(msg) {
@@ -299,22 +203,11 @@ function showToast(msg) {
     setTimeout(() => el.toast.classList.add('hidden'), 3000);
 }
 
-// Dummy Data Generator (For demo before Apps Script is linked)
 function generateDummyData() {
-    const data = [];
-    const namaSiswa = ["Budi Santoso", "Siti Aminah", "Joko Widodo", "Ayu Tingting", "Raffi Ahmad", "Agnez Mo"];
-    for(let i=1; i<=3; i++) {
-        for(let j=0; j<6; j++) {
-            data.push({
-                kelas: `Kelas ${i}`,
-                nis: `100${i}00${j}`,
-                nama: `${namaSiswa[j]} - ${i}`,
-                status: j === 0 ? 'done' : 'pending' // contoh ada yg sudah selesai
-            });
-        }
-    }
-    return data;
+    return [
+        {kelas: '7A', nis: '1001', nama: 'Budi Santoso', status: 'pending'},
+        {kelas: '7A', nis: '1002', nama: 'Siti Aminah', status: 'done'}
+    ];
 }
 
-// Run
 init();
