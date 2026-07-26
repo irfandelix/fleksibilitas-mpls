@@ -115,12 +115,12 @@ el.searchSiswa.addEventListener('input', (e) => {
 el.form.btnNext.addEventListener('click', () => navigate('siswa'));
 
 function renderKelas() {
-    el.gridKelas.innerHTML = kelasUnik.map(k => "
-        <div class="kelas-card" onclick="selectKelas('" + k + "')">
-            <h3>" + k + "</h3>
-            <p>" + dataSiswa.filter(s => s.kelas === k).length + " Siswa</p>
+    el.gridKelas.innerHTML = kelasUnik.map(k => `
+        <div class="kelas-card" onclick="selectKelas('${k}')">
+            <h3>${k}</h3>
+            <p>${dataSiswa.filter(s => s.kelas === k).length} Siswa</p>
         </div>
-    ").join('');
+    `).join('');
 }
 
 function renderSiswa(search = "") {
@@ -129,17 +129,17 @@ function renderSiswa(search = "") {
         filtered = filtered.filter(s => s.nama.toLowerCase().includes(search.toLowerCase()) || s.nis.includes(search));
     }
     
-    el.listSiswa.innerHTML = filtered.map(s => "
-        <div class="siswa-item" onclick="selectSiswa('" + s.nis + "')">
+    el.listSiswa.innerHTML = filtered.map(s => `
+        <div class="siswa-item" onclick="selectSiswa('${s.nis}')">
             <div class="siswa-info">
-                <h4>" + s.nama + "</h4>
-                <p>NIS: " + s.nis + "</p>
+                <h4>${s.nama}</h4>
+                <p>NIS: ${s.nis}</p>
             </div>
             <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end;">
-                " + (s.status === 'done' ? "<div class='siswa-status done'>Sudah Memilih</div>" : "<div class='siswa-status warning'>Belum Memilih</div>") + "
+                ${s.status === 'done' ? "<div class='siswa-status done'>Sudah Memilih</div>" : "<div class='siswa-status warning'>Belum Memilih</div>"}
             </div>
         </div>
-        ").join('');
+    `).join('');
 }
 
 window.selectKelas = (kelas) => {
