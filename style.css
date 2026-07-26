@@ -273,6 +273,8 @@ input:read-only, select:disabled { background: #F1F5F9; color: var(--text-muted)
     background: #f0f7ff;
 }
 .radio-btn input {
+    width: auto;
+    padding: 0;
     margin-right: 12px;
     transform: scale(1.2);
 }
