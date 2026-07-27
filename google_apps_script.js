@@ -7,8 +7,9 @@ function doPost(e) {
     var data = sheet.getDataRange().getValues();
     var rowToUpdate = -1;
     
+    var payloadData = d.data || d; // Mendukung format {data: {...}} atau {...}
     for (var i = 0; i < data.length; i++) {
-      if (data[i][0] == d.nis) { // Cocokkan NIS (Kolom A / Index 0)
+      if (data[i][0] == payloadData.nis) { // Cocokkan NIS (Kolom A / Index 0)
         rowToUpdate = i + 1; // getRange itu 1-indexed
         break;
       }
@@ -17,7 +18,7 @@ function doPost(e) {
     if (rowToUpdate !== -1) {
       // Update data di baris yang ditemukan:
       // Kolom L (12) = Ekstrakurikuler (Sesuai kesepakatan)
-      sheet.getRange(rowToUpdate, 12).setValue(d.ekskul);
+      sheet.getRange(rowToUpdate, 12).setValue(payloadData.ekskul);
       
       return ContentService.createTextOutput(JSON.stringify({status: 'success'}))
                            .setMimeType(ContentService.MimeType.JSON);
